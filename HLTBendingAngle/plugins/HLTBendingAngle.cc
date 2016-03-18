@@ -42,8 +42,13 @@
 #include "DataFormats/RecoCandidate/interface/RecoChargedCandidate.h"
 #include "DataFormats/RecoCandidate/interface/RecoChargedCandidateFwd.h"
 #include <DataFormats/TrackReco/interface/TrackExtra.h>
-
-
+#include "FWCore/Utilities/interface/RandomNumberGenerator.h"
+#include "CLHEP/Random/RandomEngine.h"
+#include "CLHEP/Random/Randomize.h"
+//#include "CLHEP/config/iostream.h"
+#include "FWCore/Framework/interface/Event.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "FWCore/Utilities/interface/Exception.h"
 using namespace std;
 
 struct MyTrackEffL1
@@ -64,37 +69,34 @@ struct MyTrackEffCSC
  
  Int_t lumi;
  Int_t run;
- Float_t eta_SimTrack_csc;
- Float_t phi_SimTrack_csc;
- Float_t pt_SimTrack_csc;
+ Float_t eta_SimTrack;
+ Float_t phi_SimTrack;
+ Float_t pt_SimTrack;
  Float_t vertex_x;
  Float_t vertex_y;
  Float_t vertex_z;
- Float_t dxy_csc; 
+ Float_t dxy; 
  Int_t csc_station;
  Int_t csc_ring;
+ Int_t csc_chamber;
+ Int_t nlayerscsc;
  
- Float_t Lxy_csc;
- Float_t pzvz_csc;
- Float_t pp_SimTrack_csc;
+ Int_t endcap_st1;
+ Int_t endcap_st2;
+ Int_t endcap_st3;
+ Int_t endcap_st4;
+ Float_t Lxy;
+ Float_t pzvz;
+ Float_t pp_SimTrack;
 
- Float_t p_SimTrack_csc;
- Float_t p_c_SimTrack_csc;
- Float_t charge_csc;
-
-
- Int_t has_csc_segment;
- Int_t has_csc_segment_other;
- Int_t has_csc_segment_12;
- Int_t has_csc_segment_13;
- Int_t has_csc_segment_14;
-
-
- Float_t csc_segment_bending_angle;
- Float_t csc_segment_bending_angle_12;
- Float_t csc_segment_bending_angle_13;
- Float_t csc_segment_bending_angle_14;
-
+ Float_t p_SimTrack;
+ Float_t p_c_SimTrack;
+ Float_t charge;
+ Float_t deltaphi_gp_12;
+ Float_t bending_sh_st1;
+ Float_t bending_sh_st2;
+ Float_t elliptic_value;
+ Float_t elliptic_value_st2;
 
  Float_t csc_gv_eta;
  Float_t csc_gv_phi;
@@ -105,22 +107,83 @@ struct MyTrackEffCSC
  Float_t csc_gp_z;
  Float_t csc_gp_eta;
  Float_t csc_gp_phi;
- Int_t nlayerscsc;
  Float_t csc_deltaphi_gp;
  Float_t csc_deltaphi;
- Float_t csc_deltaphi_second;
+ Int_t has_delta_y;
+ Float_t delta_y_23_12;
+ Float_t delta_x_23_12;
+ Float_t delta_y_24_12;
+ Float_t delta_x_24_12;
+ Int_t has_delta_y_4;
 
- Float_t csc_bending_angle;
+ Float_t Reco_pT_Position;
+ Float_t Reco_pT_Direction;
+ Float_t Reco_pT_Direction_Smeared;
+
+
+ Float_t DeltaPhi_Smeared_03_07;
+ Float_t DeltaPhi_Smeared_3_7;
+ Float_t DeltaPhi_Smeared_6_14;
+ Float_t DeltaPhi_Smeared_30_70;
+
+
+ Float_t Reco_pT_Direction_Smeared_3_7;
+ Float_t Reco_pT_Direction_Smeared_6_14;
+ Float_t Reco_pT_Direction_Smeared_9_21; 
+ Float_t Reco_pT_Direction_Smeared_12_28; 
+ Float_t Reco_pT_Direction_Smeared_15_35;
+ Float_t Reco_pT_Direction_Smeared_18_42; 
+ Float_t Reco_pT_Direction_Smeared_21_49;
+ Float_t Reco_pT_Direction_Smeared_24_56;
+ Float_t Reco_pT_Direction_Smeared_27_63;
+ Float_t Reco_pT_Direction_Smeared_30_70;
+ Float_t Reco_pT_Direction_Smeared_03_07;
+
+
+ Int_t has_pT_Direction;
+ Int_t has_pT_Position;
+ Int_t csc_chamber_st4;
+ Int_t csc_chamber_st3;
+ Int_t csc_chamber_st2;
+ Int_t nlayers_st2;
+ Int_t nlayers_st3;
+ Int_t nlayers_st4;
+ Float_t csc_gp_second_st3;
+ Float_t csc_gp_second_st2;
+ Float_t csc_gp_second_st4;
  Float_t csc_bending_angle_12;
  Float_t csc_bending_angle_13;
  Float_t csc_bending_angle_14;
  
+
+ Float_t delta_x_gp_12;
+ Float_t delta_y_gp_12;
+ Float_t delta_y_gp_13;
+ Float_t delta_y_gp_14;
+ Float_t delta_x_gp_13;
+ Float_t delta_x_gp_14;
+
+
+ Float_t delta_x_gp_23;
+ Float_t delta_y_gp_23;
+ Float_t delta_x_gp_24;
+ Float_t delta_y_gp_24;
+
+
+ Float_t delta_y_gp_34;
+ Float_t delta_x_gp_34;
+
+ 
+ Float_t csc_deltaphi_gp_12;
+ Float_t csc_deltaphi_gp_13;
+ Float_t csc_deltaphi_gp_14;
+ Float_t csc_deltaphi_gp_23;
+ Float_t csc_deltaphi_gp_24;
+ Float_t csc_deltaphi_gp_34;
+
+
  Float_t csc_p_over_cosh_eta;
 
- Float_t csc_q_1bending_angle;
- Float_t csc_q_1bending_angle_12;
- Float_t csc_q_1bending_angle_13;
- Float_t csc_q_1bending_angle_14;
  Float_t csc_deltaeta;
  Float_t csc_deltaeta_14;
  Float_t csc_deltaeta_13;
@@ -128,17 +191,9 @@ struct MyTrackEffCSC
  Int_t has_csc_12;
  Int_t has_csc_13;
  Int_t has_csc_14;
- Float_t csc_second_gp_x;
- Float_t csc_second_gp_y;
- Float_t csc_second_gp_z;
- Float_t csc_second_gp_eta;
- Float_t csc_second_gp_phi;
- Float_t csc_second_gv_phi;
- Float_t csc_second_gv_eta;
- Float_t csc_second_gv_pt;
- Int_t csc_second_station;
- Int_t csc_second_ring;
- Int_t csc_second_nlayers;
+ Int_t has_csc_23;
+ Int_t has_csc_24;
+ Int_t has_csc_34;
 
 
 };
@@ -217,92 +272,10 @@ struct MyTrackEffDT
  Float_t Z_gv;
  Float_t X_gv;
  Float_t Y_gv;
-
- Float_t L1_pt;
- Float_t L1_eta;
- Float_t L1_q;
- Float_t L1_phi_;
- Float_t L1_sh_dr;
  Int_t wheel;
  Int_t station;
- Float_t L1_st_dr;
-
- Int_t has_l1_sh_matched;
- Int_t has_l1_st_matched;
- Int_t has_l2;
- Float_t L2_pp;
- Float_t L2_pt;
- Float_t L2_eta;
- Float_t L2_q;
- Float_t L2_phi;
- Float_t L2_sh_dr;
- Float_t L2_st_dr;
-
- Float_t Seg_dphi_sh;
- Float_t Seg_deta_sh;
-
- Float_t Seg_dr_sh;
- Float_t Seg_dr_st;
- Float_t Seg_dr_l2;
- Int_t has_seg_sh_matched;
- Int_t has_seg_st_matched;
- Int_t has_seg_l2_matched;
- Int_t has_DTSegments;
-
- Int_t Seg_second_wheel;
- Int_t Seg_second_station;
- Float_t Seg_second_gp_eta;
- Float_t Seg_second_gp_phi;
- Float_t Seg_second_gp_z;
- Float_t Seg_second_gp_y;
- Float_t Seg_second_gp_x;
- Float_t Seg_second_gv_eta;
- Float_t Seg_second_gv_phi;
- Float_t Seg_second_sh_dr;
- Int_t Seg_second_st; //1-4 depending on the station;
-
- Int_t has_eta_phi_dr;
- Int_t Seg_wheel;
- Int_t Seg_station;
- Float_t Seg_gp_eta;
- Float_t Seg_gp_phi;
- Float_t Seg_gp_x;
- Float_t Seg_gp_y;
- Float_t Seg_gp_z;
- Float_t Seg_gv_phi;
- Float_t Seg_gv_eta;
- Float_t Seg_deltaphi_12_gv;
- Float_t Seg_deltaphi_14_gv;
- Float_t Seg_deltaphi_13_gv;
- Float_t Seg_deltaphi_23_gv;
- Float_t Seg_deltaphi_24_gv;
- Float_t Seg_deltaphi_34_gv;
- Int_t has_seg_14;
- Int_t has_second_segment_matched;
- Int_t has_seg_13;
- Int_t has_seg_12;
- Int_t has_seg_23;
- Int_t has_seg_24;
- Int_t has_seg_34;
- Int_t has_second_dtSegment;
- Float_t Seg_deltaphi_gv;
-
- Float_t L2t_wheel;
- Float_t L2t_station;
- Float_t L2t_eta;
- Float_t L2t_phi;
- Float_t L2t_pp;
- Float_t L2t_pt;
- Float_t L2t_q;
- Int_t has_l2t;
- Float_t L2t_st_dr;
- Float_t L2t_sh_dr;
- Int_t has_l2t_sh_matched;
- Int_t has_l2t_st_matched;
 
 
- Int_t has_l2_sh_matched;
- Int_t has_l2_st_matched;
 
 
 };
@@ -320,7 +293,7 @@ public:
   
 private:
   
-  void analyzeTrackEfficiency(SimTrackMatchManager& match, int trk_no);
+  void analyzeTrackEfficiency(SimTrackMatchManager& match, int trk_no, const edm::Event&);
   //, edm::Handle<std::vector<l1extra::L1MuonParticle> > l1p, edm::Handle<std::vector<reco::RecoChargedCandidate> > hlt_l2_pp, edm::Handle<std::vector<reco::TrackExtra> > l2_track, edm::Handle<edm::RangeMap<DTChamberId,edm::OwnVector<DTRecSegment4D,edm::ClonePolicy<DTRecSegment4D> >,edm::ClonePolicy<DTRecSegment4D> > > SegmentsDT);
 
   bool isSimTrackGood(const SimTrack &t);
@@ -473,21 +446,21 @@ HLTBendingAngle::HLTBendingAngle(const edm::ParameterSet& ps)
   L1Particles.push_back(8);
   L1Particles.push_back(9);
 
-  copy(L1Particles.begin(), L1Particles.end(), inserter(l1particles_muons_, l1particles_muons_.end()));
-  for(auto m: l1particles_muons_)
-  {
-    stringstream ss;
-    ss<<" trk_eff_l1_"<< L1Ppabc[m];
-    tree_eff_l1_[m] = etrk_l1_[m].book(tree_eff_l1_[m], ss.str());    
-  }
+  //copy(L1Particles.begin(), L1Particles.end(), inserter(l1particles_muons_, l1particles_muons_.end()));
+  //for(auto m: l1particles_muons_)
+  //{
+    //stringstream ss;
+    //ss<<" trk_eff_l1_"<< L1Ppabc[m];
+    //tree_eff_l1_[m] = etrk_l1_[m].book(tree_eff_l1_[m], ss.str());    
+ // }
 
-  copy(DtStationsToUse.begin(),DtStationsToUse.end(),inserter(stationsdt_to_use_,stationsdt_to_use_.end()));
-  for (auto m: stationsdt_to_use_)
-  {
-    stringstream ss;
-    ss<< "trk_eff_dt_" << stationsDT[m];
-    tree_eff_dt_[m] = etrk_dt_[m].book(tree_eff_dt_[m], ss.str());    
-  }
+  //copy(DtStationsToUse.begin(),DtStationsToUse.end(),inserter(stationsdt_to_use_,stationsdt_to_use_.end()));
+  //for (auto m: stationsdt_to_use_)
+  //{
+   // stringstream ss;
+    //ss<< "trk_eff_dt_" << stationsDT[m];
+    //tree_eff_dt_[m] = etrk_dt_[m].book(tree_eff_dt_[m], ss.str());    
+  //}
 
   copy(CSCStationsToUse.begin(),CSCStationsToUse.end(), inserter(stationscsc_to_use_, stationscsc_to_use_.end()));
   for (auto m: stationscsc_to_use_)
@@ -604,7 +577,7 @@ HLTBendingAngle::analyze(const edm::Event& ev, const edm::EventSetup& es)
      vtz_dt = sim_vert[t.vertIndex()].position().z();
 
      SimTrackMatchManager match(t, sim_vert[t.vertIndex()], cfg_, ev, es);
-     analyzeTrackEfficiency(match, trk_no);
+     analyzeTrackEfficiency(match, trk_no, ev);
     //a, l1_particles, hlt_l2_pp, l2_track, SegmentsDT);
 
     trk_no = trk_no + 1;
@@ -612,7 +585,7 @@ HLTBendingAngle::analyze(const edm::Event& ev, const edm::EventSetup& es)
 }
 
 void 
-HLTBendingAngle::analyzeTrackEfficiency(SimTrackMatchManager& match, int trk_no)
+HLTBendingAngle::analyzeTrackEfficiency(SimTrackMatchManager& match, int trk_no,  const edm::Event& ev )
 {
   const SimHitMatcher& match_sh = match.simhits();
   //const TrackMatcher& match_track = match.tracks();
@@ -627,55 +600,22 @@ HLTBendingAngle::analyzeTrackEfficiency(SimTrackMatchManager& match, int trk_no)
     etrk_csc_[st].init();
     etrk_csc_[st].run = match.simhits().event().id().run();
     etrk_csc_[st].lumi = match.simhits().event().id().luminosityBlock();
-
-    etrk_csc_[st].pt_SimTrack_csc = t.momentum().pt();
-    etrk_csc_[st].phi_SimTrack_csc = t.momentum().phi();
-    etrk_csc_[st].eta_SimTrack_csc = t.momentum().eta();
+    etrk_csc_[st].pt_SimTrack = t.momentum().pt();
+    etrk_csc_[st].phi_SimTrack = t.momentum().phi();
+    etrk_csc_[st].eta_SimTrack = t.momentum().eta();
     etrk_csc_[st].vertex_x = vtx_dt;
     etrk_csc_[st].vertex_y = vty_dt;
     etrk_csc_[st].vertex_z = vtz_dt;
-    
     auto pphi = t.momentum().phi();
-    etrk_csc_[st].dxy_csc = vtx_dt*sin(pphi) - vty_dt*cos(pphi);
-    etrk_csc_[st].pp_SimTrack_csc = t.momentum().z();
-
-    etrk_csc_[st].Lxy_csc = vtx_dt*sin(pphi) + vty_dt*cos(pphi);
-    etrk_csc_[st].pzvz_csc = t.momentum().z()*vtz_dt;
-
+    etrk_csc_[st].dxy = vtx_dt*sin(pphi) - vty_dt*cos(pphi);
+    etrk_csc_[st].pp_SimTrack= t.momentum().z();
+    etrk_csc_[st].Lxy = vtx_dt*cos(pphi) + vty_dt*sin(pphi);
+    etrk_csc_[st].pzvz = t.momentum().z()*vtz_dt;
     auto totalp = std::sqrt( t.momentum().x()*t.momentum().x() + t.momentum().y()*t.momentum().y() + t.momentum().z()*t.momentum().z());
-    etrk_csc_[st].p_SimTrack_csc = totalp;
-    etrk_csc_[st].charge_csc = t.charge();
-    etrk_csc_[st]. p_c_SimTrack_csc = totalp*t.charge();
+    etrk_csc_[st].p_SimTrack = totalp;
+    etrk_csc_[st].charge = t.charge();
+    etrk_csc_[st].p_c_SimTrack = totalp*t.charge();
   }
-
-
-  // Station 1 case
-    etrk_csc_[12].init();
-    etrk_csc_[12].run = match.simhits().event().id().run();
-    etrk_csc_[12].lumi = match.simhits().event().id().luminosityBlock();
-
-    etrk_csc_[12].pt_SimTrack_csc = t.momentum().pt();
-    etrk_csc_[12].phi_SimTrack_csc = t.momentum().phi();
-    etrk_csc_[12].eta_SimTrack_csc = t.momentum().eta();
-    etrk_csc_[12].vertex_x = vtx_dt;
-    etrk_csc_[12].vertex_y = vty_dt;
-    etrk_csc_[12].vertex_z = vtz_dt;
-
-    auto pphi = t.momentum().phi();
-    etrk_csc_[12].dxy_csc = vtx_dt*sin(pphi) - vty_dt*cos(pphi);
-
-    etrk_csc_[12].pp_SimTrack_csc = t.momentum().z();
-
-    etrk_csc_[12].Lxy_csc = vtx_dt*sin(pphi) + vty_dt*cos(pphi);
-    etrk_csc_[12].pzvz_csc = t.momentum().z()*vtz_dt;
-
-    auto totalp = std::sqrt( t.momentum().x()*t.momentum().x() + t.momentum().y()*t.momentum().y() + t.momentum().z()*t.momentum().z());
-
-    etrk_csc_[12].p_SimTrack_csc = totalp;
-    etrk_csc_[12].charge_csc = t.charge();
-    etrk_csc_[12]. p_c_SimTrack_csc = totalp*t.charge();
-
-   // End of Station 1 case.
 
 
  //CSC SimHits Start here
@@ -698,9 +638,13 @@ HLTBendingAngle::analyzeTrackEfficiency(SimTrackMatchManager& match, int trk_no)
       }
     }
 
+    if (nlayers < 4) continue;
     etrk_csc_[st].nlayerscsc = nlayers;
     etrk_csc_[st].csc_station = id.station();
+    etrk_csc_[1].csc_station = id.station();
+    etrk_csc_[st].csc_chamber = id.chamber();
     etrk_csc_[st].csc_ring = id.ring();
+    etrk_csc_[1].csc_ring = id.ring();
 
     GlobalPoint hitGp = match_sh.simHitsMeanPosition(match_sh.hitsInChamber(d));
     etrk_csc_[st].csc_gp_x = hitGp.x();
@@ -716,44 +660,19 @@ HLTBendingAngle::analyzeTrackEfficiency(SimTrackMatchManager& match, int trk_no)
     etrk_csc_[st].csc_gv_pt = ym.perp();
     etrk_csc_[st].csc_deltaphi = deltaPhi(hitGp.phi(), ym.phi());  //Bending Angle Position and Direction
 
-	// Segments
-	//
-	//
-    auto totalp = std::sqrt( t.momentum().x()*t.momentum().x() + t.momentum().y()*t.momentum().y() + t.momentum().z()*t.momentum().z());
-    etrk_csc_[st].csc_p_over_cosh_eta = totalp/cosh(std::abs(hitGp.eta()));
 
-    CSCSegment cscsegment;
-    float basechi = 99.;
-    int hasseg = 0;
-
-    auto segcsc = match_cscrh.cscSegmentsInChamber(id);
-    for (auto cscseg : segcsc)
-    {
-	float chi2overNdf(cscseg.chi2()/cscseg.degreesOfFreedom());
-	if (chi2overNdf < basechi) {
-		cscsegment = cscseg;
-		hasseg = 1;
-	}	
-    }
+    float local_bending = match_sh.LocalBendingInChamber(d);
+    etrk_csc_[st].bending_sh_st1 = local_bending;
 
 
-    etrk_csc_[st].has_csc_segment = hasseg;
 
-    GlobalVector segmentGV;
-    if (hasseg > 0){
-	auto lv = cscsegment.localDirection();
-	GlobalVector segGV = match_sh.segmentCSCDirection(lv, id);
-	
-	segmentGV= segGV;
-
-    } 
-
+    //std::cout<<" There's hit on ME "<<id.station()<<id.ring()<<" Chamber :"<<id.chamber()<<" with eta: "<<t.momentum().eta()<<" pT: "<<t.momentum().pt()<<std::endl;
+    //std::cout<<"              This has GP eta: "<<hitGp.eta()<<" and GV eta: "<<ym.eta()<<" And phi: "<<ym.phi()<<std::endl;
 
     // Case ME11
-    if(id.station()==1 and (id.ring()==4 or id.ring()==1)){
+    if(id.station()==1){
         etrk_csc_[1].nlayerscsc = nlayers;
-        etrk_csc_[1].csc_station = 1;
-        etrk_csc_[1].csc_ring = 1;
+        etrk_csc_[1].bending_sh_st1 = local_bending;
         etrk_csc_[1].csc_gp_x = hitGp.x();
         etrk_csc_[1].csc_gp_y = hitGp.y();
         etrk_csc_[1].csc_gp_z = hitGp.z();
@@ -764,33 +683,13 @@ HLTBendingAngle::analyzeTrackEfficiency(SimTrackMatchManager& match, int trk_no)
         etrk_csc_[1].csc_gv_phi = ym.phi();
         etrk_csc_[1].csc_gv_pt = ym.perp();
         etrk_csc_[1].csc_deltaphi = deltaPhi(hitGp.phi(), ym.phi());  //Bending Angle Position and Direction
-        etrk_csc_[1].has_csc_segment = hasseg;
-	
+	etrk_csc_[1].csc_chamber = id.chamber();
 	auto totalp = std::sqrt( t.momentum().x()*t.momentum().x() + t.momentum().y()*t.momentum().y() + t.momentum().z()*t.momentum().z());
 	etrk_csc_[1].csc_p_over_cosh_eta = totalp/cosh(std::abs(hitGp.eta()));
+	etrk_csc_[1].endcap_st1 = id.endcap();
     }
 
 
-    if(id.station()==1){
-        etrk_csc_[12].nlayerscsc = nlayers;
-        etrk_csc_[12].csc_station = 1;
-        etrk_csc_[12].csc_ring = 1;
-        etrk_csc_[12].csc_gp_x = hitGp.x();
-        etrk_csc_[12].csc_gp_y = hitGp.y();
-        etrk_csc_[12].csc_gp_z = hitGp.z();
-        etrk_csc_[12].csc_gp_r = hitGp.perp();
-        etrk_csc_[12].csc_gp_eta = hitGp.eta();
-        etrk_csc_[12].csc_gp_phi = hitGp.phi();
-        etrk_csc_[12].csc_gv_eta = ym.eta();
-        etrk_csc_[12].csc_gv_phi = ym.phi();
-        etrk_csc_[12].csc_gv_pt = ym.perp();
-        etrk_csc_[12].csc_deltaphi = deltaPhi(hitGp.phi(), ym.phi()); 
-        etrk_csc_[12].has_csc_segment = hasseg;
-        auto totalp = std::sqrt( t.momentum().x()*t.momentum().x() + t.momentum().y()*t.momentum().y() + t.momentum().z()*t.momentum().z());
-        etrk_csc_[12].csc_p_over_cosh_eta = totalp/cosh(std::abs(hitGp.eta()));
-
-
-    }
 
 
     //Starting look for second hit
@@ -804,91 +703,697 @@ HLTBendingAngle::analyzeTrackEfficiency(SimTrackMatchManager& match, int trk_no)
         
         if(s_nlayers == 0) continue; // Check to have hits in the secondary chamber
         if(d_nlayers == 0) continue; //Check that has hits in previous one
-        if(id.station() == s_id.station() and id.ring() == s_id.ring()) continue;  // No double hits in the same chamber (st, ring) with ME11 requiring changes
 	if(id.station() == s_id.station()) continue; // no double hits in the same station, ME11 included by default. 
+	if (s_nlayers < 4) continue;
 
         GlobalPoint hitGp2 = match_sh.simHitsMeanPosition(match_sh.hitsInChamber(s_d));
         GlobalVector ym2 = match_sh.simHitsMeanMomentum(match_sh.hitsInChamber(s_d));
- 
-	//if (s_nlayers < 4) continue; // 4 layers hardcored. 
-        etrk_csc_[st].csc_second_nlayers = s_nlayers;
-        etrk_csc_[st].csc_second_ring = s_id.ring();
-        etrk_csc_[st].csc_second_station = s_id.station();
-        etrk_csc_[st].csc_second_gp_x = hitGp2.x();
-        etrk_csc_[st].csc_second_gp_y = hitGp2.y();
-        etrk_csc_[st].csc_second_gp_z = hitGp2.z();
-        etrk_csc_[st].csc_second_gp_eta = hitGp2.eta();
-        etrk_csc_[st].csc_second_gp_phi = hitGp2.phi();
-        etrk_csc_[st].csc_second_gv_eta = ym2.eta();
-        etrk_csc_[st].csc_second_gv_phi = ym2.phi();
-        etrk_csc_[st].csc_second_gv_pt = ym2.perp();
-        etrk_csc_[st].csc_bending_angle = deltaPhi(ym.phi(), ym2.phi());
-        etrk_csc_[st].csc_deltaphi_second = deltaPhi(hitGp2.phi(), ym2.phi());
-        etrk_csc_[st].csc_deltaphi_gp = deltaPhi(hitGp2.phi(), hitGp.phi());
-        etrk_csc_[st].csc_deltaeta = ym.eta() - ym2.eta();
-        etrk_csc_[st].csc_q_1bending_angle = t.charge()/deltaPhi(ym.phi(), ym2.phi());
 
 
-	CSCSegment cscsegment2;
-	float basechi2 = 99.;
-	int hasseg2 = 0;
+	// Calculate here the p_T from Direction 
+	
+	
+	
+        //std::cout<<" Passes here second loop: "<<std::endl;
 
-	auto segcsc2 = match_cscrh.cscSegmentsInChamber(s_id);
-	for (auto cscseg : segcsc2)
-	{
-        	float chi2overNdf(cscseg.chi2()/cscseg.degreesOfFreedom());
-	        if (chi2overNdf < basechi2) {
-        	        cscsegment2 = cscseg;
-                	hasseg2 = 1;
-	        }
-	}
+	// Special case for ME1
+        if(id.station()==1 ){
 
-
-        GlobalVector segmentGV2;
-        if (hasseg2 > 0){
-    	    auto lv = cscsegment2.localDirection();
-        	GlobalVector segGV = match_sh.segmentCSCDirection(lv, s_id);
-	        segmentGV2= segGV;
-       }
-
-
-	etrk_csc_[st].has_csc_segment_other = hasseg2;
-
-	// Special case for ME11
-        if(id.station()==1 and (id.ring()==4 or id.ring()==1)){
-            etrk_csc_[1].csc_second_nlayers = s_nlayers;
-            etrk_csc_[1].csc_second_ring = s_id.ring();
-            etrk_csc_[1].csc_second_station = s_id.station();
-            etrk_csc_[1].csc_second_gp_x = hitGp2.x();
-            etrk_csc_[1].csc_second_gp_y = hitGp2.y();
-            etrk_csc_[1].csc_second_gp_z = hitGp2.z();
-            etrk_csc_[1].csc_second_gp_eta = hitGp2.eta();
-            etrk_csc_[1].csc_second_gp_phi = hitGp2.phi();
-            etrk_csc_[1].csc_second_gv_eta = ym2.eta();
-            etrk_csc_[1].csc_second_gv_phi = ym2.phi();
-            etrk_csc_[1].csc_second_gv_pt = ym2.perp();
-            etrk_csc_[1].csc_bending_angle = deltaPhi(ym.phi(), ym2.phi());  
-            etrk_csc_[1].csc_deltaphi_second = deltaPhi(hitGp2.phi(), ym2.phi());
-            etrk_csc_[1].csc_deltaphi_gp = deltaPhi(hitGp2.phi(), hitGp.phi());
-            etrk_csc_[1].csc_deltaeta = ym.eta() - ym2.eta();
-            etrk_csc_[1].csc_q_1bending_angle = t.charge()/deltaPhi(ym.phi(), ym2.phi());
 
             if(s_id.station()==2){
+
+    		float local_bending_st2 = match_sh.LocalBendingInChamber(s_d);
+        	etrk_csc_[1].bending_sh_st2 = local_bending_st2;
+        	etrk_csc_[st].bending_sh_st2 = local_bending_st2;
+
+
+		float anglea =   hitGp2.phi();
+            	float newxst1 =  hitGp.x()*cos(anglea) + hitGp.y()*sin(anglea);
+	        float newyst1 = -hitGp.x()*sin(anglea) + hitGp.y()*cos(anglea);
+		float newxst2 =  hitGp2.x()*cos(anglea) + hitGp2.y()*sin(anglea);
+                float newyst2 = -hitGp2.x()*sin(anglea) + hitGp2.y()*cos(anglea);
+		
+
+
+
+		//std::cout<<" Passed csc 12 requirement "<<std::endl;
+		etrk_csc_[1].delta_x_gp_12 = newxst2 - newxst1;
+		etrk_csc_[st].delta_x_gp_12 = newxst2 - newxst1;
+		etrk_csc_[st].delta_y_gp_12 = newyst2 - newyst1;
+		etrk_csc_[1].delta_y_gp_12 = newyst2 - newyst1;
+
+		etrk_csc_[1].endcap_st2 = s_id.endcap();
+		etrk_csc_[st].endcap_st2 = s_id.endcap();
+
                 etrk_csc_[1].csc_bending_angle_12 = deltaPhi(ym.phi(), ym2.phi());
                 etrk_csc_[st].csc_bending_angle_12 = deltaPhi(ym.phi(), ym2.phi());
                 etrk_csc_[1].has_csc_12 = 1;
                 etrk_csc_[st].has_csc_12 = 1;                                                     // Ask for this
                 etrk_csc_[st].csc_deltaeta_12 = ym.eta() - ym2.eta();
                 etrk_csc_[1].csc_deltaeta_12 = ym.eta() - ym2.eta();
-                etrk_csc_[st].csc_q_1bending_angle_12 = t.charge()/deltaPhi(ym.phi(), ym2.phi()); // Use this 
-                etrk_csc_[1].csc_q_1bending_angle_12 = t.charge()/deltaPhi(ym.phi(), ym2.phi());
+		etrk_csc_[1].csc_gp_second_st2 = hitGp2.eta();
+		etrk_csc_[st].csc_gp_second_st2 = hitGp2.eta();
 
-		if (hasseg >0 and hasseg2 > 0 ) {
-			 etrk_csc_[1].has_csc_segment_12 = 1;
-			 etrk_csc_[st].has_csc_segment_12 = 1;
- 			 etrk_csc_[st].csc_segment_bending_angle_12 = deltaPhi(segmentGV.phi(), segmentGV2.phi());
- 			 etrk_csc_[1].csc_segment_bending_angle_12 = deltaPhi(segmentGV.phi(), segmentGV2.phi());
+		etrk_csc_[st].nlayers_st2 = s_nlayers;
+		etrk_csc_[1].nlayers_st2 = s_nlayers;
+
+		etrk_csc_[st].csc_chamber_st2 = s_id.chamber();
+		etrk_csc_[1].csc_chamber_st2 = s_id.chamber();
+		etrk_csc_[1].csc_deltaphi_gp_12 = deltaPhi(hitGp.phi(),hitGp2.phi());
+		etrk_csc_[st].csc_deltaphi_gp_12 = deltaPhi(hitGp.phi(),hitGp2.phi());
+
+		float deltaphi_global = deltaPhi(hitGp.phi(),hitGp2.phi());
+		//edm::Service<edm::RandomNumberGenerator> RandGauss;
+		//CLHEP::HepRandomEngine& engine = RandGauss->getEngine(ev.streamID());
+	
+
+
+                double first_3 = CLHEP::RandGauss::shoot(ym.phi(), .003);
+                double second_7 = CLHEP::RandGauss::shoot(ym2.phi(), .007);
+                double delta_phi_smeared_3_7 = deltaPhi(first_3, second_7);
+
+
+                double first_6 = CLHEP::RandGauss::shoot(ym.phi(), .006);
+                double second_14 = CLHEP::RandGauss::shoot(ym2.phi(), .014);
+                double delta_phi_smeared_6_14 = deltaPhi(first_6, second_14);
+
+
+		double first_9 = CLHEP::RandGauss::shoot(ym.phi(), .009);
+		double second_21 = CLHEP::RandGauss::shoot(ym2.phi(), .021);
+		double delta_phi_smeared_9_21 = deltaPhi(first_9, second_21);
+
+
+                double first_12 = CLHEP::RandGauss::shoot(ym.phi(), .012);
+                double second_28 = CLHEP::RandGauss::shoot(ym2.phi(), .028);
+                double delta_phi_smeared_12_28 = deltaPhi(first_12, second_28);
+
+
+                double first_15 = CLHEP::RandGauss::shoot(ym.phi(), .015);
+                double second_35 = CLHEP::RandGauss::shoot(ym2.phi(), .035);
+                double delta_phi_smeared_15_35 = deltaPhi(first_15, second_35);
+
+                double first_18 = CLHEP::RandGauss::shoot(ym.phi(), .018);
+                double second_42 = CLHEP::RandGauss::shoot(ym2.phi(), .042);
+                double delta_phi_smeared_18_42 = deltaPhi(first_18, second_42);
+
+                double first_21 = CLHEP::RandGauss::shoot(ym.phi(), .021);
+                double second_49 = CLHEP::RandGauss::shoot(ym2.phi(), .049);
+                double delta_phi_smeared_21_49 = deltaPhi(first_21, second_49);
+
+
+                double first_24 = CLHEP::RandGauss::shoot(ym.phi(), .024);
+                double second_56 = CLHEP::RandGauss::shoot(ym2.phi(), .056);
+                double delta_phi_smeared_24_56 = deltaPhi(first_24, second_56);
+
+
+                double first_27 = CLHEP::RandGauss::shoot(ym.phi(), .027);
+                double second_63 = CLHEP::RandGauss::shoot(ym2.phi(), .063);
+                double delta_phi_smeared_27_63 = deltaPhi(first_27, second_63);
+
+
+                double first_30 = CLHEP::RandGauss::shoot(ym.phi(), .030);
+                double second_70 = CLHEP::RandGauss::shoot(ym2.phi(), .070);
+                double delta_phi_smeared_30_70 = deltaPhi(first_30, second_70);
+
+
+                double first_03 = CLHEP::RandGauss::shoot(ym.phi(), .0003);
+                double second_07 = CLHEP::RandGauss::shoot(ym2.phi(), .0007);
+                double delta_phi_smeared_03_07 = deltaPhi(first_03, second_07);
+
+
+		
+		etrk_csc_[1].DeltaPhi_Smeared_03_07 = deltaPhi(first_03, second_07);
+		etrk_csc_[1].DeltaPhi_Smeared_3_7 = deltaPhi(first_3, second_7);
+		etrk_csc_[1].DeltaPhi_Smeared_6_14 = deltaPhi(first_6, second_14);
+		etrk_csc_[1].DeltaPhi_Smeared_30_70 = deltaPhi(first_30, second_70);
+
+
+		float csc_bending_angle_variable = deltaPhi(ym.phi(), ym2.phi());
+		float delta_y_gp_12_variable = newyst2 - newyst1;
+
+		//std::cout<<" Initial delta phi: "<<csc_bending_angle_variable<<" smeared value: "<<delta_phi_smeared<<std::endl;
+
+		for(auto t_d: csc_simhits)
+		{
+	        	CSCDetId t_id(t_d);
+	        	const int t_st(detIdToMEStation(t_id.station(),t_id.ring()));
+        		if (stationscsc_to_use_.count(t_st) == 0) continue;
+		        int t_nlayers(match_sh.nLayersWithHitsInSuperChamber(t_d));
+
+			if (t_nlayers < 4) continue;
+
+			if (t_id.station()==1) continue;
+			if (t_id.station()==2) continue;
+			if (t_id.station()==4) continue;
+
+
+			//std::cout<<" Passes 123 requirement "<<std::endl;
+		        GlobalPoint hitGp3 = match_sh.simHitsMeanPosition(match_sh.hitsInChamber(t_d));
+			float ysst3 = -hitGp3.x()*sin(anglea) + hitGp3.y()*cos(anglea);
+			float xsst3 = hitGp3.x()*cos(anglea) + hitGp3.y()*sin(anglea);
+			
+			etrk_csc_[st].has_delta_y = 1;
+			etrk_csc_[1].has_delta_y = 1;
+
+			etrk_csc_[1].delta_y_23_12 =  ysst3 - newyst2;
+			etrk_csc_[st].delta_y_23_12 =  ysst3 - newyst2;
+			etrk_csc_[st].delta_x_23_12 =  xsst3 - newxst2;
+			etrk_csc_[1].delta_x_23_12 =  xsst3 - newxst2;
+
+
+			float delta_y_gp_23_variable =  ysst3 - newyst2;
+
+
+			int parity_case = -1;
+
+			if (id.chamber()%2 == 1){
+				if (s_id.chamber()%2==0 and t_id.chamber()%2==0) parity_case = 0;
+				if (s_id.chamber()%2==1 and t_id.chamber()%2==1) parity_case = 1;
+
+			} 
+			if (id.chamber()%2 == 0) {
+				if (s_id.chamber()%2==0 and t_id.chamber()%2==0) parity_case = 2;
+				if (s_id.chamber()%2==1 and t_id.chamber()%2==1) parity_case = 3;
+
+			}
+
+
+			if(parity_case == -1){
+				//std::cout<<" Error in the parity assignment -- Continue"<<std::endl;
+				continue;
+			}
+
+			float etamin = 0.0;
+
+
+			//std::cout<<" Before eta calculation "<<std::endl;
+
+			if( fabs(hitGp2.eta())>1.6 and fabs(hitGp2.eta()<1.8)) etamin = 1.6;
+			if( fabs(hitGp2.eta())>1.8 and fabs(hitGp2.eta()<2.0)) etamin = 1.8;
+			if( fabs(hitGp2.eta())>2.0 and fabs(hitGp2.eta()<2.2)) etamin = 2.0;
+			if( fabs(hitGp2.eta())>2.2 and fabs(hitGp2.eta()<2.4)) etamin = 2.2;
+
+			if(etamin == 0.0){
+				//std::cout<<" Error in the eta measurement -- Continue "<<std::endl;
+				continue;
+			}
+
+
+
+			//std::cout<<" Passes to calculation of pT with etamin: "<<etamin<<" and parity_case: "<<parity_case<<std::endl;
+
+	                float sigma_phi = 0.0;
+                	float slope_phi = 0.0;
+                	float intercept_phi = 0.0;
+                
+			float slope_phi_03_07 = 0.;
+			float intercept_phi_03_07 = 0.;
+			float slope_phi_3_7 = 0.;
+			float intercept_phi_3_7 = 0.;
+			float slope_phi_30_70 = 0.;
+			float intercept_phi_30_70 = 0.;
+			float slope_phi_6_14 = 0.;
+			float intercept_phi_6_14 = 0.;
+                	if (parity_case ==0){
+                        	if (etamin == 1.6){
+	                            sigma_phi = 0.03583;
+        	                    slope_phi = 4.53;
+                	            intercept_phi = 9.422;
+
+				    slope_phi_03_07 = 8.332;
+				    intercept_phi_03_07 = -18.13;
+				    slope_phi_3_7 = 6.015;
+				    intercept_phi_3_7 = -8.998;
+				    slope_phi_6_14 = 7.003;
+				    intercept_phi_6_14 = -15.09;
+				    slope_phi_30_70 = 3.554;
+				    intercept_phi_30_70 = -5.732;
+
+				}
+	                        if (etamin == 1.8){
+        	                    slope_phi = 5.788;
+                	            intercept_phi = 9.743;
+                        	    sigma_phi = 0.04496;
+
+                                    slope_phi_03_07 = 8.926;
+                                    intercept_phi_03_07 =-17.72;
+                                    slope_phi_3_7 = 6.777;
+                                    intercept_phi_3_7 =-8.605;
+                                    slope_phi_6_14 = 4.7;
+                                    intercept_phi_6_14 =0.6635;
+                                    slope_phi_30_70 = 2.652;
+                                    intercept_phi_30_70 =0.2292;
+
+
+				}
+	                        if (etamin == 2.0){
+        	                    sigma_phi = 0.05328;
+                	            slope_phi = 8.367;
+                        	    intercept_phi = 10.22;
+
+                                    slope_phi_03_07 =10.97;
+                                    intercept_phi_03_07 =-15.35;
+                                    slope_phi_3_7 =7.448;
+                                    intercept_phi_3_7 =1.17;
+                                    slope_phi_6_14 =3.575;
+                                    intercept_phi_6_14 =20.95;
+                                    slope_phi_30_70 =1.509;
+                                    intercept_phi_30_70 =8.654;
+
+				}
+	                        if (etamin == 2.2){
+        	                    sigma_phi = 0.05832;
+                	            slope_phi = 11.02;
+                        	    intercept_phi = 14.84;
+
+
+                                    slope_phi_03_07 = 11.65;
+                                    intercept_phi_03_07 =-16.24;
+                                    slope_phi_3_7 = 7.112;
+                                    intercept_phi_3_7 =9.354;
+                                    slope_phi_6_14 =3.293;
+                                    intercept_phi_6_14 =27.21;
+                                    slope_phi_30_70 =0.9409;
+                                    intercept_phi_30_70 =13.37;
+
+				}
+
+			}
+	                if (parity_case ==1 ){
+        	                if (etamin == 1.6){
+                	            sigma_phi = 0.03948;
+                        	    slope_phi = 4.779;
+	                            intercept_phi = 9.954;
+
+                                    slope_phi_03_07 = 7.545;
+                                    intercept_phi_03_07 = -15.03;
+                                    slope_phi_3_7 = 5.835;
+                                    intercept_phi_3_7 = - 9.2;
+                                    slope_phi_6_14 = 5.639;
+                                    intercept_phi_6_14 = - 9.791;
+                                    slope_phi_30_70 = 4.224;
+                                    intercept_phi_30_70 = -7.633;
+
+
+
+				}
+        	                if (etamin == 1.8){
+                	            sigma_phi = 0.04381;
+                        	    slope_phi= 6.273;
+	                            intercept_phi = 11.91;
+
+                                    slope_phi_03_07 = 7.979;
+                                    intercept_phi_03_07 =-15.14;
+                                    slope_phi_3_7 = 6.509;
+                                    intercept_phi_3_7 =-8.294;
+                                    slope_phi_6_14 = 3.28;
+                                    intercept_phi_6_14 =12.92;
+                                    slope_phi_30_70 = 2.661;
+                                    intercept_phi_30_70 =2.661;
+
+
+				}
+        	                if (etamin == 2.0){
+                	            sigma_phi = 0.0557;
+                        	    slope_phi = 9.315;
+	                            intercept_phi =12.21;
+
+
+                                    slope_phi_03_07 = 11.;
+                                    intercept_phi_03_07 =-18.05;
+                                    slope_phi_3_7 =7.727;
+                                    intercept_phi_3_7 =-2.885;
+                                    slope_phi_6_14 =3.432;
+                                    intercept_phi_6_14 =19.09;
+                                    slope_phi_30_70 =2.434;
+                                    intercept_phi_30_70 =4.157;
+
+				}
+        	                if (etamin == 2.2){
+                	            sigma_phi = 0.06099;
+                        	    slope_phi = 10.34;
+	                            intercept_phi = 11.02;
+
+                                    slope_phi_03_07 = 11.96;
+                                    intercept_phi_03_07 =-16.66;
+                                    slope_phi_3_7 = 6.087;
+                                    intercept_phi_3_7 =17.15;
+                                    slope_phi_6_14 = 3.3;
+                                    intercept_phi_6_14 =25.51;
+                                    slope_phi_30_70 =1.97;
+                                    intercept_phi_30_70 =8.397;
+
+
+				}
+                        }
+        	        if ( parity_case ==2 ){
+                	        if (etamin == 1.6){
+                        	    sigma_phi = 0.05226;
+	                            slope_phi = 7.677;
+        	                    intercept_phi =16.82;
+
+
+
+
+                                    slope_phi_03_07 = 4.771;
+                                    intercept_phi_03_07 = -10.11;
+                                    slope_phi_3_7 = 5.524;
+                                    intercept_phi_3_7 = -12.05;
+                                    slope_phi_6_14 = 4.735;
+                                    intercept_phi_6_14 = - 10.07;
+                                    slope_phi_30_70 = 2.984;
+                                    intercept_phi_30_70 = - 4.306;
+
+				}
+                	        if ( etamin == 1.8){
+                        	    sigma_phi = 0.04987;
+	                            slope_phi= 7.726;
+        	                    intercept_phi = 13.36;
+
+
+                                    slope_phi_03_07 = 6.644;
+                                    intercept_phi_03_07 =-13.71;
+                                    slope_phi_3_7 = 6.094;
+                                    intercept_phi_3_7 = - 11.72;
+                                    slope_phi_6_14 = 4.049;
+                                    intercept_phi_6_14 = - 0.4039;
+                                    slope_phi_30_70 = 3.188;
+                                    intercept_phi_30_70 =-3.364;
+
+				}
+                	        if (etamin == 2.0){
+                        	    sigma_phi = 0.06021;
+	                            slope_phi = 9.621;
+        	                    intercept_phi =10.62;
+
+                                    slope_phi_03_07 =9.387;
+                                    intercept_phi_03_07 =-12.4;
+                                    slope_phi_3_7 = 5.593;
+                                    intercept_phi_3_7 =10.12;
+                                    slope_phi_6_14 =3.409;
+                                    intercept_phi_6_14 =17.62;
+                                    slope_phi_30_70 =2.697;
+                                    intercept_phi_30_70 =2.567;
+
+				}
+                	        if (etamin == 2.2){
+                        	    sigma_phi = 0.05825;
+	                            slope_phi = 11.23;
+        	                    intercept_phi = 13.44;
+
+
+                                    slope_phi_03_07 = 11.12;
+                                    intercept_phi_03_07 = -12.63;
+                                    slope_phi_3_7 = 7.845;
+                                    intercept_phi_3_7 =1.213;
+                                    slope_phi_6_14 =3.277;
+                                    intercept_phi_6_14 =28.02;
+                                    slope_phi_30_70 = 1.451;
+                                    intercept_phi_30_70 =9.471;
+
+				}
+			}
+        	        if (parity_case ==3 ){
+                	        if (etamin == 1.6){
+                        	    sigma_phi = 0.04902;
+	                            slope_phi = 7.72;
+        	                    intercept_phi = 16.91;
+
+                                    slope_phi_03_07 = 4.677;
+                                    intercept_phi_03_07 = - 9.775;
+                                    slope_phi_3_7 = 4.622;
+                                    intercept_phi_3_7 = -9.637;
+                                    slope_phi_6_14 = 4.081;
+                                    intercept_phi_6_14 = -7.384;
+                                    slope_phi_30_70 = 3.196;
+                                    intercept_phi_30_70 =5.167;
+
+
+				}
+                	        if (etamin == 1.8){
+                        	    sigma_phi = 0.04995;
+	                            slope_phi = 8.643;
+        	                    intercept_phi = 16.45;
+
+
+                                    slope_phi_03_07 = 6.257;
+                                    intercept_phi_03_07 =-12.12;
+                                    slope_phi_3_7 = 5.419;
+                                    intercept_phi_3_7 =-7.962;
+                                    slope_phi_6_14 = 3.614;
+                                    intercept_phi_6_14 =1.553;
+                                    slope_phi_30_70 =2.519;
+                                    intercept_phi_30_70 =-0.02093;
+
+				}
+                	        if (etamin == 2.0){
+                        	    sigma_phi = 0.05696;
+	                            slope_phi = 10.02;
+        	                    intercept_phi =11.83;
+
+
+                                    slope_phi_03_07 =8.544;
+                                    intercept_phi_03_07 =-11.85;
+                                    slope_phi_3_7 =5.916;
+                                    intercept_phi_3_7 =1.654;
+                                    slope_phi_6_14 =2.932;
+                                    intercept_phi_6_14 =20.77;
+                                    slope_phi_30_70 =3.137;
+                                    intercept_phi_30_70 =0.7447;
+
+				}
+                	        if (etamin == 2.2){
+                        	    sigma_phi = 0.05652;
+	                            slope_phi = 11.83;
+        	                    intercept_phi = 17.66;
+
+
+                                    slope_phi_03_07 = 10.61;
+                                    intercept_phi_03_07 =-10.52;
+                                    slope_phi_3_7 = 6.667;
+                                    intercept_phi_3_7 =7.642;
+                                    slope_phi_6_14 =3.727;
+                                    intercept_phi_6_14 =19.85;
+                                    slope_phi_30_70 = 1.252;
+                                    intercept_phi_30_70 =10.23;
+
+				}
+	
+			}
+
+ 	               float slope = 0.0;
+ 	               float intercept = 0.0;
+ 	               float prop = 0.0;
+	               float sigma= 0.0;
+
+		       float slope_elliptic_Tao = 0.0;
+		       float slope_Tao_st2 = 0.0;
+ 	               if (parity_case ==0 ){
+				slope_elliptic_Tao = -16.82;
+				slope_Tao_st2 = -26.87;
+        	                prop = 0.6484;
+                	        if (etamin == 1.6){
+                        	    sigma = 0.01319;
+	                            slope = 0.05527;
+        	                    intercept = 0.08944;
+				}
+                	        if (etamin == 1.8){
+                        	    sigma = 0.02154;
+	                            slope= 0.08295;
+        	                    intercept = 0.1279;
+				}
+                	        if (etamin == 2.0){
+                        	    sigma = 0.03251;
+	                            slope = 0.166;
+        	                    intercept = 0.2158;
+				}
+                	        if (etamin == 2.2){
+                        	    sigma = 0.05515;
+	                            slope = 0.4952;
+        	                    intercept = 0.7103;
+				}
+
+			}
+        	        if (parity_case ==1 ){
+				slope_elliptic_Tao = -16.03;
+				slope_Tao_st2 = -21.64;
+                	        prop = 0.3542;
+                        	if (etamin == 1.6){
+	                            sigma = 0.01014;
+        	                    slope = 0.1067;
+                	            intercept = 0.1957;
+				}
+                        	if (etamin == 1.8){
+	                            sigma = 0.01997;
+        	                    slope= 0.1561;
+                	            intercept = 0.2654;
+				}
+                        	if (etamin == 2.0){
+ 	                           sigma = 0.03619;
+        	                    slope = 0.3156;
+                	            intercept = 0.4514;
+				}
+	                        if (etamin == 2.2){
+        	                    sigma = 0.05695;
+                	            slope = 0.8242;
+                        	    intercept = 1.071;
+				}
+			}
+	                if (parity_case ==2 ){
+				slope_elliptic_Tao = -14.91;
+				slope_Tao_st2 = -23.63;
+        	                prop = 0.5636;
+                	        if (etamin == 1.6){
+                        	    sigma = 0.008583;
+	                            slope = 0.05624;
+        	                    intercept = 0.08417;
+				}
+                	        if (etamin == 1.8){
+                        	    sigma = 0.02352;
+	                            slope= 0.08702;
+        	                    intercept = 0.1426;
+				}
+                	        if (etamin == 2.0){
+                        	    sigma = 0.03006;
+	                            slope = 0.1676;
+        	                    intercept = 0.2198;
+				}
+                	        if (etamin == 2.2){
+                        	    sigma = 0.05692;
+	                            slope = 0.4953;
+        	                    intercept = 0.7272;
+				}
+                	}           
+	                if (parity_case ==3 ){
+				slope_elliptic_Tao = -13.77;
+				slope_Tao_st2 = -19.7;
+        	                prop = 0.3217;
+                	        if (etamin == 1.6){
+                        	    sigma = 0.006731;
+	                            slope = 0.1066;
+        	                    intercept = 0.2026;
+				}
+                	        if (etamin == 1.8){
+                        	    sigma = 0.02152;
+	                            slope= 0.1435;
+        	                    intercept = 0.2118;
+				}
+                	        if (etamin == 2.0){
+                        	    sigma = 0.03513;
+	                            slope = 0.2874;
+        	                    intercept = 0.4055;
+				}
+                	        if (etamin == 2.2){
+	                            sigma = 0.05173;
+        	                    slope = 0.7625;
+                	            intercept = 1.075;
+				}	
+
+			}
+
+
+
+			
+			if (csc_bending_angle_variable == 0) continue;
+			if (delta_y_gp_23_variable == 0 ) continue;
+			if (delta_y_gp_12_variable == 0) continue;
+			if (slope_phi == 0) continue;
+			if (slope == 0) continue;		
+
+
+
+			etrk_csc_[1].deltaphi_gp_12 = deltaphi_global;
+			etrk_csc_[st].deltaphi_gp_12 = deltaphi_global;
+ 			etrk_csc_[1].elliptic_value = abs( deltaphi_global  - slope_elliptic_Tao*local_bending);
+ 			etrk_csc_[st].elliptic_value = abs( deltaphi_global  - slope_elliptic_Tao*local_bending);
+			etrk_csc_[1].elliptic_value_st2 = abs( deltaphi_global  - slope_Tao_st2*local_bending_st2);
+			etrk_csc_[st].elliptic_value_st2 = abs( deltaphi_global  - slope_Tao_st2*local_bending_st2);
+
+			float Reco_pT_Direction_var =  (( 1/abs(csc_bending_angle_variable) + intercept_phi )/slope_phi );
+			etrk_csc_[st].Reco_pT_Direction = Reco_pT_Direction_var;
+
+			etrk_csc_[1].Reco_pT_Direction = Reco_pT_Direction_var;
+
+			float Reco_pT_Dir_smeared_3_7 = (( 1/abs(delta_phi_smeared_3_7) - intercept_phi_3_7 )/slope_phi_3_7 );
+			float Reco_pT_Dir_smeared_6_14 = (( 1/abs(delta_phi_smeared_6_14) - intercept_phi_6_14 )/slope_phi_6_14 );
+			float Reco_pT_Dir_smeared_9_21 = (( 1/abs(delta_phi_smeared_9_21) + intercept_phi )/slope_phi );
+			float Reco_pT_Dir_smeared_12_28 = (( 1/abs(delta_phi_smeared_12_28) + intercept_phi )/slope_phi );
+			float Reco_pT_Dir_smeared_15_35 = (( 1/abs(delta_phi_smeared_15_35) + intercept_phi )/slope_phi );
+			float Reco_pT_Dir_smeared_18_42 = (( 1/abs(delta_phi_smeared_18_42) + intercept_phi )/slope_phi );
+			float Reco_pT_Dir_smeared_21_49 = (( 1/abs(delta_phi_smeared_21_49) + intercept_phi )/slope_phi );
+			float Reco_pT_Dir_smeared_24_56 = (( 1/abs(delta_phi_smeared_24_56) + intercept_phi )/slope_phi );
+			float Reco_pT_Dir_smeared_27_63 = (( 1/abs(delta_phi_smeared_27_63) + intercept_phi )/slope_phi );
+			float Reco_pT_Dir_smeared_30_70 = (( 1/abs(delta_phi_smeared_30_70) - intercept_phi_30_70 )/slope_phi_30_70 );
+			float Reco_pT_Dir_smeared_03_07 = (( 1/abs(delta_phi_smeared_03_07) - intercept_phi_03_07 )/slope_phi_03_07 );
+
+
+
+
+			etrk_csc_[1].Reco_pT_Direction_Smeared_3_7 = Reco_pT_Dir_smeared_3_7;
+			etrk_csc_[1].Reco_pT_Direction_Smeared_6_14 = Reco_pT_Dir_smeared_6_14;
+			etrk_csc_[1].Reco_pT_Direction_Smeared_9_21 = Reco_pT_Dir_smeared_9_21;
+			etrk_csc_[1].Reco_pT_Direction_Smeared_12_28 = Reco_pT_Dir_smeared_12_28;
+			etrk_csc_[1].Reco_pT_Direction_Smeared_15_35 = Reco_pT_Dir_smeared_15_35;
+			etrk_csc_[1].Reco_pT_Direction_Smeared_18_42 = Reco_pT_Dir_smeared_18_42;
+			etrk_csc_[1].Reco_pT_Direction_Smeared_21_49 = Reco_pT_Dir_smeared_21_49;
+			etrk_csc_[1].Reco_pT_Direction_Smeared_24_56 = Reco_pT_Dir_smeared_24_56;
+			etrk_csc_[1].Reco_pT_Direction_Smeared_27_63 = Reco_pT_Dir_smeared_27_63;
+			etrk_csc_[1].Reco_pT_Direction_Smeared_30_70 = Reco_pT_Dir_smeared_30_70;
+			etrk_csc_[1].Reco_pT_Direction_Smeared_03_07 = Reco_pT_Dir_smeared_03_07;
+
+
+
+
+			etrk_csc_[1].has_pT_Direction = 1;
+			etrk_csc_[st].has_pT_Direction = 1;
+
+
+			etrk_csc_[1].has_pT_Position = 1;
+			etrk_csc_[st].has_pT_Position = 1;
+			float Reco_pT_Position_var =  (( 1/abs((delta_y_gp_23_variable) - prop*(delta_y_gp_12_variable) )  + intercept )/slope);
+			etrk_csc_[st].Reco_pT_Position  =  Reco_pT_Position_var;
+			etrk_csc_[1].Reco_pT_Position  =  Reco_pT_Position_var;
+			// Calculate here the pT for Position
+
+			etrk_csc_[1].p_c_SimTrack = sigma + sigma_phi;
+
+			//std::cout<<" Reco pT Direction: "<<Reco_pT_Direction_var<<" Reco pT Position: "<<Reco_pT_Position_var<<" True pT "<<t.momentum().pt()<<std::endl;
+			//std::cout<<" Sigma Direction : "<<sigma_phi<<" Sigma Position: "<<sigma<<" eta: "<<t.momentum().eta()<<std::endl;
 		}
+
+
+
+
+
+
+
+                for(auto t_d: csc_simhits)
+                {
+                        CSCDetId t_id(t_d);
+                        const int t_st(detIdToMEStation(t_id.station(),t_id.ring()));
+                        if (stationscsc_to_use_.count(t_st) == 0) continue;
+                        int t_nlayers(match_sh.nLayersWithHitsInSuperChamber(t_d));
+
+                        if (t_nlayers < 4) continue;
+
+                        if (t_id.station()==1) continue;
+                        if (t_id.station()==2) continue;
+                        if (t_id.station()==3) continue;
+
+                        GlobalPoint hitGp4 = match_sh.simHitsMeanPosition(match_sh.hitsInChamber(t_d));
+                        float ysst4 = -hitGp4.x()*sin(anglea) + hitGp4.y()*cos(anglea);
+                        float xsst4 = hitGp4.x()*cos(anglea) + hitGp4.y()*sin(anglea);
+
+                        etrk_csc_[st].has_delta_y_4 = 1;
+                        etrk_csc_[1].has_delta_y_4 = 1;
+
+                        etrk_csc_[1].delta_y_24_12 =  ysst4 - newyst2;
+                        etrk_csc_[st].delta_y_24_12 =  ysst4 - newyst2;
+                        etrk_csc_[st].delta_x_24_12 =  xsst4 - newxst2;
+                        etrk_csc_[1].delta_x_24_12 =  xsst4 - newxst2;
+                }
+
+
 
             }
         
@@ -899,16 +1404,18 @@ HLTBendingAngle::analyzeTrackEfficiency(SimTrackMatchManager& match, int trk_no)
                 etrk_csc_[st].has_csc_13 = 1;
                 etrk_csc_[1].csc_deltaeta_13 = ym.eta() - ym2.eta();
                 etrk_csc_[st].csc_deltaeta_13 = ym.eta() - ym2.eta();
-                etrk_csc_[1].csc_q_1bending_angle_13 = t.charge()/deltaPhi(ym.phi(), ym2.phi());
-                etrk_csc_[st].csc_q_1bending_angle_13 = t.charge()/deltaPhi(ym.phi(), ym2.phi());
+		etrk_csc_[1].csc_gp_second_st3 = hitGp2.eta();
+		etrk_csc_[st].csc_gp_second_st3 = hitGp2.eta();
+		etrk_csc_[st].nlayers_st3 = s_nlayers;
+		etrk_csc_[1].nlayers_st3 = s_nlayers;
 
-                if (hasseg >0 and hasseg2 > 0 ) {
-                         etrk_csc_[1].has_csc_segment_13 = 1;
-                         etrk_csc_[st].has_csc_segment_13 = 1;
-                         etrk_csc_[st].csc_segment_bending_angle_13 = deltaPhi(segmentGV.phi(), segmentGV2.phi());
-                         etrk_csc_[1].csc_segment_bending_angle_13 = deltaPhi(segmentGV.phi(), segmentGV2.phi());
-                }
-
+		etrk_csc_[1].endcap_st3 = s_id.endcap();
+		etrk_csc_[st].endcap_st3 = s_id.endcap();
+		etrk_csc_[1].csc_chamber_st3 = s_id.chamber();
+		etrk_csc_[st].csc_chamber_st3 = s_id.chamber();
+		etrk_csc_[1].csc_deltaphi_gp_13 = deltaPhi(hitGp.phi(),hitGp2.phi());
+		etrk_csc_[st].csc_deltaphi_gp_13 = deltaPhi(hitGp.phi(),hitGp2.phi());
+                
 
             }
 
@@ -919,15 +1426,18 @@ HLTBendingAngle::analyzeTrackEfficiency(SimTrackMatchManager& match, int trk_no)
                 etrk_csc_[st].csc_bending_angle_14 = deltaPhi(ym.phi(), ym2.phi());
                 etrk_csc_[st].csc_deltaeta_14 = ym.eta() - ym2.eta();
                 etrk_csc_[1].csc_deltaeta_14 = ym.eta() - ym2.eta();
-                etrk_csc_[1].csc_q_1bending_angle_14 = t.charge()/deltaPhi(ym.phi(), ym2.phi());
-                etrk_csc_[st].csc_q_1bending_angle_14 = t.charge()/deltaPhi(ym.phi(), ym2.phi());
+		etrk_csc_[1].csc_gp_second_st4 = hitGp2.eta();
+		etrk_csc_[st].csc_gp_second_st4 = hitGp2.eta();
+		etrk_csc_[st].nlayers_st4 = s_nlayers;
+		etrk_csc_[1].nlayers_st4 = s_nlayers;
+		etrk_csc_[1].endcap_st4 = s_id.endcap();
+		etrk_csc_[st].endcap_st4 = s_id.endcap();
 
-                if (hasseg >0 and hasseg2 > 0 ) {
-                         etrk_csc_[1].has_csc_segment_14 = 1;
-                         etrk_csc_[st].has_csc_segment_14 = 1;
-                         etrk_csc_[st].csc_segment_bending_angle_14 = deltaPhi(segmentGV.phi(), segmentGV2.phi());
-                         etrk_csc_[1].csc_segment_bending_angle_14 = deltaPhi(segmentGV.phi(), segmentGV2.phi());
-                }
+
+		etrk_csc_[st].csc_chamber_st4 = s_id.chamber();
+		etrk_csc_[1].csc_chamber_st4 = s_id.chamber();
+		etrk_csc_[1].csc_deltaphi_gp_14 = deltaPhi(hitGp.phi(),hitGp2.phi());
+		etrk_csc_[st].csc_deltaphi_gp_14 = deltaPhi(hitGp.phi(),hitGp2.phi());
 
 
             }
@@ -935,60 +1445,62 @@ HLTBendingAngle::analyzeTrackEfficiency(SimTrackMatchManager& match, int trk_no)
 
 
 
-	// Starting Special Case for ME1
-        if(id.station()==1){
-            etrk_csc_[12].csc_second_nlayers = s_nlayers;
-            etrk_csc_[12].csc_second_ring = s_id.ring();
-            etrk_csc_[12].csc_second_station = s_id.station();
-            etrk_csc_[12].csc_second_gp_x = hitGp2.x();
-            etrk_csc_[12].csc_second_gp_y = hitGp2.y();
-            etrk_csc_[12].csc_second_gp_z = hitGp2.z();
-            etrk_csc_[12].csc_second_gp_eta = hitGp2.eta();
-            etrk_csc_[12].csc_second_gp_phi = hitGp2.phi();
-            etrk_csc_[12].csc_second_gv_eta = ym2.eta();
-            etrk_csc_[12].csc_second_gv_phi = ym2.phi();
-            etrk_csc_[12].csc_second_gv_pt = ym2.perp();
-            etrk_csc_[12].csc_bending_angle = deltaPhi(ym.phi(), ym2.phi()); // Use this and ask for has_csc_1X
-            etrk_csc_[12].csc_deltaphi_second = deltaPhi(hitGp2.phi(), ym2.phi());
-            etrk_csc_[12].csc_deltaphi_gp = deltaPhi(hitGp2.phi(), hitGp.phi());
-            etrk_csc_[12].csc_deltaeta = ym.eta() - ym2.eta();
-            etrk_csc_[12].csc_q_1bending_angle = t.charge()/deltaPhi(ym.phi(), ym2.phi());
+	if (id.station()==2){
 
-            if(s_id.station()==2){
-                etrk_csc_[12].csc_bending_angle_12 = deltaPhi(ym.phi(), ym2.phi());
-                etrk_csc_[st].csc_bending_angle_12 = deltaPhi(ym.phi(), ym2.phi());
-                etrk_csc_[12].has_csc_12 = 1;
-                etrk_csc_[st].has_csc_12 = 1;
-                etrk_csc_[st].csc_deltaeta_12 = ym.eta() - ym2.eta();
-                etrk_csc_[12].csc_deltaeta_12 = ym.eta() - ym2.eta();
-            	etrk_csc_[12].csc_q_1bending_angle_12 = t.charge()/deltaPhi(ym.phi(), ym2.phi());
-            	etrk_csc_[st].csc_q_1bending_angle_12 = t.charge()/deltaPhi(ym.phi(), ym2.phi());
-            }
+		etrk_csc_[1].endcap_st2 = id.endcap();
+		if(s_id.station()==3){
 
-            if(s_id.station()==3){
-                etrk_csc_[st].csc_bending_angle_13 = deltaPhi(ym.phi(), ym2.phi());
-                etrk_csc_[12].csc_bending_angle_13 = deltaPhi(ym.phi(), ym2.phi());
-                etrk_csc_[12].has_csc_13 = 1;
-                etrk_csc_[st].has_csc_13 = 1;
-                etrk_csc_[12].csc_deltaeta_13 = ym.eta() - ym2.eta();
-                etrk_csc_[st].csc_deltaeta_13 = ym.eta() - ym2.eta();
-            	etrk_csc_[st].csc_q_1bending_angle_13 = t.charge()/deltaPhi(ym.phi(), ym2.phi());
-            	etrk_csc_[12].csc_q_1bending_angle_13 = t.charge()/deltaPhi(ym.phi(), ym2.phi());
+			float angleb =   hitGp.phi();
+		        float newxst2 =  hitGp.x()*cos(angleb) + hitGp.y()*sin(angleb);
+		        float newyst2 = -hitGp.x()*sin(angleb) + hitGp.y()*cos(angleb);
+        		float newxst3 =  hitGp2.x()*cos(angleb) + hitGp2.y()*sin(angleb);
+        		float newyst3 = -hitGp2.x()*sin(angleb) + hitGp2.y()*cos(angleb);
 
-            }
+			etrk_csc_[1].delta_x_gp_23 = newxst3 - newxst2;
+			etrk_csc_[st].delta_x_gp_23 = newxst3 - newxst2;
+			etrk_csc_[st].delta_y_gp_23 = newyst3 - newyst2;
+			etrk_csc_[1].delta_y_gp_23 = newyst3 - newyst2;
 
-            if(s_id.station()==4){
-                etrk_csc_[st].has_csc_14 = 1;
-                etrk_csc_[12].has_csc_14 = 1;
-                etrk_csc_[12].csc_bending_angle_14 = deltaPhi(ym.phi(), ym2.phi()); // Deprecated all *_1X;
-                etrk_csc_[st].csc_bending_angle_14 = deltaPhi(ym.phi(), ym2.phi());
-                etrk_csc_[st].csc_deltaeta_14 = ym.eta() - ym2.eta();
-                etrk_csc_[12].csc_deltaeta_14 = ym.eta() - ym2.eta();
-            	etrk_csc_[st].csc_q_1bending_angle_13 = t.charge()/deltaPhi(ym.phi(), ym2.phi());
-            	etrk_csc_[12].csc_q_1bending_angle_13 = t.charge()/deltaPhi(ym.phi(), ym2.phi());
-            }
-        }  // End of Special Case ME1 
+              		etrk_csc_[1].has_csc_23 = 1;
+              		etrk_csc_[st].has_csc_23 = 1;
+			etrk_csc_[st].csc_deltaphi_gp_23 = deltaPhi(hitGp.phi(),hitGp2.phi());
+	              	etrk_csc_[1].csc_deltaphi_gp_23 = deltaPhi(hitGp.phi(),hitGp2.phi());
 
+			etrk_csc_[1].endcap_st3 = s_id.endcap();
+			etrk_csc_[st].endcap_st3 = s_id.endcap();
+
+
+		}
+
+		if(s_id.station()==4){
+              		etrk_csc_[1].csc_deltaphi_gp_24 = deltaPhi(hitGp.phi(),hitGp2.phi());
+        	      	etrk_csc_[st].csc_deltaphi_gp_24 = deltaPhi(hitGp.phi(),hitGp2.phi());
+              		etrk_csc_[1].has_csc_24 = 1;
+			etrk_csc_[1].endcap_st4 = s_id.endcap();
+			etrk_csc_[st].endcap_st4 = s_id.endcap();
+              		etrk_csc_[st].has_csc_24 = 1;
+		}
+		
+
+	}
+
+
+	if (id.station()==3){
+
+
+		etrk_csc_[1].endcap_st3 = id.endcap();
+
+		if (s_id.station()==4){
+              	  etrk_csc_[st].csc_deltaphi_gp_34 = deltaPhi(hitGp.phi(),hitGp2.phi());
+              	  etrk_csc_[1].csc_deltaphi_gp_34 = deltaPhi(hitGp.phi(),hitGp2.phi());
+		  etrk_csc_[1].endcap_st4 = s_id.endcap();
+		  etrk_csc_[st].endcap_st4 = s_id.endcap();
+		  etrk_csc_[1].has_csc_34 = 1;
+		  etrk_csc_[st].has_csc_34 = 1;
+
+		}
+
+	}
 
         //std::cout<<" Second hit in Station ME"<<s_id.station()<<s_id.ring()<<" with nlayers "<<s_nlayers<<std::endl;
 
@@ -1038,35 +1550,32 @@ void MyTrackEffCSC::init()
 {
 
  lumi = - 99;
+ endcap_st1 = 0;
+ endcap_st2 = 0;
+ endcap_st3 = 0;
+ endcap_st4 = 0;
  run = - 99;
- 
- pt_SimTrack_csc = - 9;
- phi_SimTrack_csc = - 9;
- eta_SimTrack_csc= - 9;
+ pt_SimTrack = - 9;
+ phi_SimTrack = - 9;
+ eta_SimTrack= - 9;
  vertex_x = - 9;
  vertex_y = - 9;
  vertex_z = - 9;
 
- dxy_csc = - 9.;
- p_SimTrack_csc = - 9;
- charge_csc = - 9.;
- p_c_SimTrack_csc = - 9;
+ dxy = - 9.;
+ p_SimTrack = - 9;
+ charge = - 9.;
+ p_c_SimTrack = - 9;
  
- Lxy_csc = - 9999.;
- pzvz_csc = - 999.;
- pp_SimTrack_csc = - 99.;
+ Lxy = - 9999.;
+ pzvz = - 999.;
+ pp_SimTrack = - 99.;
 
- csc_second_gp_x = - 9999.;
- csc_second_gp_y = - 9999.;
- csc_second_gp_z = - 9999.;
- csc_second_gp_eta = - 99.;
- csc_second_gp_phi = - 99.;
- csc_second_gv_phi = -99.;
- csc_second_gv_eta = - 99.;
- csc_second_gv_pt = - 9.;
- csc_second_station = - 9;
- csc_second_ring = - 9;
- csc_second_nlayers = - 9;
+ elliptic_value_st2 = - 99.;
+ bending_sh_st1 = - 99.;
+ bending_sh_st2 = - 99.;
+ elliptic_value = - 99.;
+ deltaphi_gp_12 = - 99.;
 
  csc_gp_y = - 9999;
  csc_gp_x = - 9999;
@@ -1075,21 +1584,29 @@ void MyTrackEffCSC::init()
  nlayerscsc = 0;
  csc_gp_eta = - 9;
  csc_gp_phi = - 9;
- 
+ csc_chamber = - 9; 
+ csc_chamber_st2 = - 9;
+ csc_chamber_st3 = - 9;
+ csc_chamber_st4 = - 9;
  csc_gv_eta = - 9.;
  csc_gv_phi = - 9.;
  csc_gv_pt = - 9.;
 
- has_csc_segment = 0;
- has_csc_segment_other = 0;
- has_csc_segment_12= 0;
- has_csc_segment_13 = 0;
- has_csc_segment_14 = 0;
 
- csc_segment_bending_angle =  - 9.;
- csc_segment_bending_angle_12 = - 9.;
- csc_segment_bending_angle_13 = - 9.;
- csc_segment_bending_angle_14 = - 9.;
+ delta_x_gp_12 = - 999.;
+ delta_x_gp_13 = - 999.;
+ delta_x_gp_14 = - 999.;
+ delta_y_gp_12 = - 999.;
+ delta_y_gp_13 = - 999.;
+ delta_y_gp_14 = - 999.;
+
+ delta_x_gp_23 = - 999.;
+ delta_y_gp_23 = - 999.;
+ delta_x_gp_24 = - 999.;
+ delta_y_gp_24 = - 999.;
+
+ delta_x_gp_34 = - 999.;
+ delta_y_gp_34 = - 999.;
 
  csc_station = - 99;
  csc_ring = - 99;
@@ -1098,21 +1615,70 @@ void MyTrackEffCSC::init()
  csc_deltaeta_13 = - 99.;
  csc_deltaeta_12 = - 99.;
 
+ has_delta_y = 0;
+ delta_y_23_12 = - 9999.;
+ delta_x_23_12 = - 9999.;
+
+
+ Reco_pT_Direction_Smeared_3_7 = - 9.0;
+ Reco_pT_Direction_Smeared_6_14 = - 9.0;
+ Reco_pT_Direction_Smeared_9_21 = - 9.0;
+ Reco_pT_Direction_Smeared_12_28 = - 9.0;
+ Reco_pT_Direction_Smeared_15_35 = - 9.0;
+ Reco_pT_Direction_Smeared_18_42 = - 9.0;
+ Reco_pT_Direction_Smeared_21_49 = - 9.0;
+ Reco_pT_Direction_Smeared_24_56 = - 9.0;
+ Reco_pT_Direction_Smeared_27_63 = - 9.0;
+ Reco_pT_Direction_Smeared_30_70 = - 9.0;
+ Reco_pT_Direction_Smeared_03_07 = - 9.0;
+
+ Reco_pT_Direction_Smeared = - 9.0;
+ Reco_pT_Direction = - 9.;
+ Reco_pT_Position = - 9.;
+
+ DeltaPhi_Smeared_03_07 = - 99.;
+ DeltaPhi_Smeared_3_7 = - 99.;
+ DeltaPhi_Smeared_6_14 = - 99.;
+ DeltaPhi_Smeared_30_70 = - 99.;
+
+
+ has_pT_Direction = 0;
+ has_pT_Position = 0;
+
+ has_delta_y_4 = 0;
+ delta_y_24_12 = -9999.;
+ delta_x_24_12 = - 9999.;
+
+
+ delta_x_24_12 = - 9999.;
+ delta_y_24_12 = - 9999.;
+ has_delta_y_4= 0;
+
+ csc_deltaphi_gp_12=-99.;
+ csc_deltaphi_gp_13=-99.;
+ csc_deltaphi_gp_14=-99.;
+ csc_deltaphi_gp_23=-99.;
+ csc_deltaphi_gp_24=-99.;
+ csc_deltaphi_gp_34=-99.;
+
+ csc_gp_second_st2 = 0.;
+ nlayers_st3 = 0;
+ nlayers_st4 = 0;
+ nlayers_st2 = 0;
+ csc_gp_second_st3 = 0.;
+ csc_gp_second_st4 = 0.;
  has_csc_12 = 0;
  has_csc_13 = 0;
  has_csc_14 = 0;
- csc_bending_angle = - 99;
+ has_csc_23 = 0;
+ has_csc_24 = 0;
+ has_csc_34 = 0;
+
  csc_bending_angle_12 = - 99;
  csc_bending_angle_13 = - 99;
  csc_bending_angle_14 = - 99;
  csc_deltaphi_gp = - 99;
  csc_deltaphi = - 99;
- csc_deltaphi_second = - 99;
-
- csc_q_1bending_angle = - 99.;
- csc_q_1bending_angle_12 = - 99.;
- csc_q_1bending_angle_13 = - 99.;
- csc_q_1bending_angle_14 = - 99.;
 
  csc_p_over_cosh_eta = - 99.; 
 }
@@ -1134,67 +1700,6 @@ void MyTrackEffDT::init()
  apt_SimTrack_dt=-999;
  charge_dt = -99;
 
- Seg_dphi_sh = 99;
- Seg_deta_sh = 99;
-
- Seg_dr_sh = -9.;
- Seg_dr_st = -9.;
- Seg_dr_l2 = -9.;
- has_seg_sh_matched = 0;
- has_seg_st_matched = 0;
- has_seg_l2_matched = 0;
- has_DTSegments = 0;
-
- Seg_second_wheel =  - 9;
- Seg_second_station = - 9;
- Seg_second_st = 0;
- Seg_second_gp_eta = - 99.;
- Seg_second_gp_phi = - 99.;
- Seg_second_gp_z = - 9999.;
- Seg_second_gp_y = - 9999.;
- Seg_second_gp_x = - 9999.;
- Seg_second_gv_eta = - 99.;
- Seg_second_gv_phi = - 9.;
- Seg_second_sh_dr = - 9.;
- has_eta_phi_dr = 0;
- Seg_wheel = - 9;
- Seg_station = - 9;
- Seg_gp_eta = - 99.;
- Seg_gp_phi = - 99.;
- Seg_gp_x = - 9999.;
- Seg_gp_y = - 9999.;
- Seg_gp_z = - 9999.;
- Seg_gv_phi = - 99.;
- Seg_gv_eta = - 99.;
- Seg_deltaphi_12_gv = - 99.;
- Seg_deltaphi_13_gv = - 99.;
- Seg_deltaphi_14_gv = - 99.;
- Seg_deltaphi_23_gv = - 99.;
- Seg_deltaphi_24_gv = - 99.;
- Seg_deltaphi_34_gv = - 99.;
- has_seg_14 = 0;
- has_second_segment_matched = 0;
- has_second_dtSegment  = 0;
- Seg_deltaphi_gv = - 999.;
-
- has_seg_13 = 0;
- has_seg_12 = 0;
- has_seg_23 = 0;
- has_seg_24 = 0;
- has_seg_34 = 0;
-
- L2t_eta = -99.;
- L2t_phi = - 99.;
- L2t_pp = - 99.;
- L2t_pt = - 99.;
- L2t_q = 0;
- has_l2t = 0;
- L2t_st_dr = 99.;
- L2t_sh_dr = 99;
- has_l2t_sh_matched = 0;
- has_l2t_st_matched = 0;
- L2t_wheel = -9;
- L2t_station = -9.;
 
  deltaphi_first_second_gv=-99.;
  deltaphi_first_second_gp=-99.;
@@ -1248,26 +1753,7 @@ void MyTrackEffDT::init()
 
  wheel = -9;
  station = - 9;
- L1_pt = - 99.;
- L1_eta = - 9.;
- L1_q = - 9.;
- L1_phi_ = -99.;
- L1_sh_dr = - 99.;
- L1_st_dr = - 99.;
 
- has_l1_sh_matched = 0;
- has_l1_st_matched = 0;
- has_l2 = 0;
- L2_pp = - 99.;
- L2_pt = - 99.;
- L2_eta = - 9.;
- L2_q = - 9.;
- L2_phi = -99.;
- L2_sh_dr = - 99.;
- L2_st_dr = - 99.;
-
- has_l2_sh_matched = 0;
- has_l2_st_matched = 0;
 
 }
 
@@ -1292,24 +1778,34 @@ TTree*MyTrackEffCSC::book(TTree *t, const std::string & name)
 
   t->Branch("run", &run);
   t->Branch("lumi", &lumi);
-  t->Branch("pt_SimTrack_csc", &pt_SimTrack_csc);
-  t->Branch("phi_SimTrack_csc", &phi_SimTrack_csc);
-  t->Branch("eta_SimTrack_csc", &eta_SimTrack_csc); 
+  t->Branch("pt_SimTrack", &pt_SimTrack);
+  t->Branch("phi_SimTrack", &phi_SimTrack);
+  t->Branch("eta_SimTrack", &eta_SimTrack); 
   t->Branch("vertex_x", &vertex_x);
   t->Branch("vertex_y", &vertex_y);
   t->Branch("vertex_z", &vertex_z);
 
-  t->Branch("dxy_csc", &dxy_csc);
+  t->Branch("dxy", &dxy);
   t->Branch("csc_station", &csc_station);
   t->Branch("csc_ring", &csc_ring);
-  t->Branch("Lxy_csc", &Lxy_csc);
-  t->Branch("pzvz_csc", &Lxy_csc);
-  t->Branch("pp_SimTrack_csc", &pp_SimTrack_csc);
+  t->Branch("Lxy", &Lxy);
+  t->Branch("pzvz", &Lxy);
+  t->Branch("pp_SimTrack", &pp_SimTrack);
 
 
-  t->Branch("p_SimTrack_csc", &p_SimTrack_csc);
-  t->Branch("charge_csc", &charge_csc);
-  t->Branch("p_c_SimTrack_csc", &p_c_SimTrack_csc);
+  t->Branch("p_SimTrack", &p_SimTrack);
+  t->Branch("charge", &charge);
+  t->Branch("p_c_SimTrack", &p_c_SimTrack);
+  t->Branch("endcap_st1", &endcap_st1);
+  t->Branch("endcap_st2", &endcap_st2);
+  t->Branch("endcap_st3", &endcap_st3);
+  t->Branch("endcap_st4", &endcap_st4);
+
+  t->Branch("elliptic_value", &elliptic_value);
+  t->Branch("bending_sh_st1", &bending_sh_st1);
+  t->Branch("bending_sh_st2", &bending_sh_st2);
+  t->Branch("elliptic_value_st2", &elliptic_value_st2);
+  t->Branch("deltaphi_gp_12", &deltaphi_gp_12);
 
 
   t->Branch("csc_gp_y", &csc_gp_y);
@@ -1321,54 +1817,90 @@ TTree*MyTrackEffCSC::book(TTree *t, const std::string & name)
   t->Branch("nlayerscsc", &nlayerscsc);
 
 
-  t->Branch("csc_second_gp_x", &csc_second_gp_x);
-  t->Branch("csc_second_gp_y", &csc_second_gp_y);
-  t->Branch("csc_second_gp_z", &csc_second_gp_z);
-  t->Branch("csc_second_gp_eta", &csc_second_gp_eta);
-  t->Branch("csc_second_gp_phi", &csc_second_gp_phi);
-  t->Branch("csc_second_gp_x", &csc_second_gp_x);
-  t->Branch("csc_second_gp_x", &csc_second_gp_x);
+  t->Branch("delta_x_gp_12", &delta_x_gp_12);
+  t->Branch("delta_y_gp_12", &delta_y_gp_12);
+  t->Branch("delta_x_gp_13", &delta_x_gp_13);
+  t->Branch("delta_y_gp_14", &delta_y_gp_14);
+  t->Branch("delta_x_gp_13", &delta_x_gp_13);
+  t->Branch("delta_y_gp_14", &delta_y_gp_14);
+
+  t->Branch("delta_y_gp_23", &delta_y_gp_23);
+  t->Branch("delta_x_gp_23", &delta_x_gp_23);
+  t->Branch("delta_y_gp_24", &delta_y_gp_24);
+  t->Branch("delta_x_gp_24", &delta_x_gp_24);
+
+  t->Branch("delta_x_gp_34", &delta_x_gp_34);
+  t->Branch("delta_y_gp_34", &delta_y_gp_34);
+
+  t->Branch("csc_chamber_st4", &csc_chamber_st4);
+  t->Branch("csc_chamber_st3", &csc_chamber_st3);
+  t->Branch("csc_chamber_st2", &csc_chamber_st2);
+  t->Branch("csc_chamber", &csc_chamber);
  
-
-  t->Branch("csc_second_gv_phi", &csc_second_gv_phi);
-  t->Branch("csc_second_gv_eta", &csc_second_gv_eta);
-  t->Branch("csc_second_gv_pt", &csc_second_gv_pt);
- 
-  t->Branch("csc_second_station", &csc_second_station);
-  t->Branch("csc_second_ring", &csc_second_ring);
-  t->Branch("csc_second_nlayers", &csc_second_nlayers);
-
-
-  t->Branch("has_csc_segment", &has_csc_segment);
-  t->Branch("has_csc_segment_other", &has_csc_segment_other);
-  t->Branch("has_csc_segment_12", &has_csc_segment_12);
-  t->Branch("has_csc_segment_13", &has_csc_segment_13);
-  t->Branch("has_csc_segment_14", &has_csc_segment_14);
-
-
-  t->Branch("csc_segment_bending_angle", &csc_segment_bending_angle);
-  t->Branch("csc_segment_bending_angle_12", &csc_segment_bending_angle);
-  t->Branch("csc_segment_bending_angle_13", &csc_segment_bending_angle);
-  t->Branch("csc_segment_bending_angle_14", &csc_segment_bending_angle);
-
 
   t->Branch("csc_gv_eta", &csc_gv_eta);
   t->Branch("csc_gv_pt", &csc_gv_pt);
   t->Branch("csc_gv_phi", &csc_gv_phi);
   t->Branch("csc_deltaphi", &csc_deltaphi);
   t->Branch("csc_deltaphi_gp", &csc_deltaphi_gp);
-  t->Branch("csc_deltaphi_second", &csc_deltaphi_second);
 
-  t->Branch("csc_bending_angle", &csc_bending_angle);
+
+  t->Branch("nlayers_st2", &nlayers_st2);
+  t->Branch("nlayers_st3", &nlayers_st3);
+  t->Branch("nlayers_st4", &nlayers_st4);
+
+
+  t->Branch("has_delta_y", &has_delta_y);
+  t->Branch("delta_x_23_from12", &delta_x_23_12);
+  t->Branch("delta_y_23_from12", &delta_y_23_12);
+
+
+
+  t->Branch("Reco_pT_Direction_Smeared_3_7", &Reco_pT_Direction_Smeared_3_7);
+  t->Branch("Reco_pT_Direction_Smeared_6_14", &Reco_pT_Direction_Smeared_6_14);
+  t->Branch("Reco_pT_Direction_Smeared_9_21", &Reco_pT_Direction_Smeared_9_21);
+  t->Branch("Reco_pT_Direction_Smeared_12_28", &Reco_pT_Direction_Smeared_12_28);
+  t->Branch("Reco_pT_Direction_Smeared_15_35", &Reco_pT_Direction_Smeared_15_35);
+  t->Branch("Reco_pT_Direction_Smeared_18_42", &Reco_pT_Direction_Smeared_18_42);
+  t->Branch("Reco_pT_Direction_Smeared_21_49", &Reco_pT_Direction_Smeared_21_49);
+  t->Branch("Reco_pT_Direction_Smeared_24_56", &Reco_pT_Direction_Smeared_24_56);
+  t->Branch("Reco_pT_Direction_Smeared_27_63", &Reco_pT_Direction_Smeared_27_63);
+  t->Branch("Reco_pT_Direction_Smeared_30_70", &Reco_pT_Direction_Smeared_30_70);
+  t->Branch("Reco_pT_Direction_Smeared_03_07", &Reco_pT_Direction_Smeared_03_07);
+
+
+  t->Branch("DeltaPhi_Smeared_03_07", &DeltaPhi_Smeared_03_07);
+  t->Branch("DeltaPhi_Smeared_3_7", &DeltaPhi_Smeared_3_7);
+  t->Branch("DeltaPhi_Smeared_6_14", &DeltaPhi_Smeared_6_14);
+  t->Branch("DeltaPhi_Smeared_30_70", &DeltaPhi_Smeared_30_70);
+
+
+  t->Branch("Reco_pT_Direction", &Reco_pT_Direction);
+  t->Branch("Reco_pT_Direction_Smeared", &Reco_pT_Direction_Smeared);
+  t->Branch("has_pT_Direction", &has_pT_Direction);
+  t->Branch("has_pT_Position", &has_pT_Position);
+  t->Branch("Reco_pT_Position", &Reco_pT_Position);
+  t->Branch("has_delta_y_4", &has_delta_y);
+  t->Branch("delta_x_24_from12", &delta_x_24_12);
+  t->Branch("delta_y_24_from12", &delta_y_24_12);
+
+
+  t->Branch("csc_deltaphi_gp_12", &csc_deltaphi_gp_12);
+  t->Branch("csc_deltaphi_gp_13", &csc_deltaphi_gp_13);
+  t->Branch("csc_deltaphi_gp_14", &csc_deltaphi_gp_14);
+  t->Branch("csc_deltaphi_gp_23", &csc_deltaphi_gp_23);
+  t->Branch("csc_deltaphi_gp_24", &csc_deltaphi_gp_24);
+  t->Branch("csc_deltaphi_gp_34", &csc_deltaphi_gp_34);
+
+
+
+  t->Branch("csc_gp_second_st3", &csc_gp_second_st3);
+  t->Branch("csc_gp_second_st2", &csc_gp_second_st2);
+  t->Branch("csc_gp_second_st4", &csc_gp_second_st4);
   t->Branch("csc_bending_angle_12", &csc_bending_angle_12);
   t->Branch("csc_bending_angle_13", &csc_bending_angle_13);
   t->Branch("csc_bending_angle_14", &csc_bending_angle_14);
 
-
-  t->Branch("csc_q_1bending_angle", &csc_q_1bending_angle);
-  t->Branch("csc_q_1bending_angle_12", &csc_q_1bending_angle_12);
-  t->Branch("csc_q_1bending_angle_13", &csc_q_1bending_angle_13);
-  t->Branch("csc_q_1bending_angle_14", &csc_q_1bending_angle_14);
   t->Branch("csc_p_over_cosh_eta", &csc_p_over_cosh_eta);
 
   t->Branch("csc_deltaeta_14", &csc_deltaeta_14);
@@ -1378,6 +1910,9 @@ TTree*MyTrackEffCSC::book(TTree *t, const std::string & name)
   t->Branch("has_csc_12", &has_csc_12);
   t->Branch("has_csc_13", &has_csc_13);
   t->Branch("has_csc_14", &has_csc_14);
+  t->Branch("has_csc_23", &has_csc_23);
+  t->Branch("has_csc_24", &has_csc_24);
+  t->Branch("has_csc_34", &has_csc_34);
   return t;
 }
 
@@ -1385,84 +1920,6 @@ TTree*MyTrackEffDT::book(TTree *t,const std::string & name)
 {
   edm::Service< TFileService > fs;
   t = fs->make<TTree>(name.c_str(),name.c_str());
-
-  t->Branch("L1_st_dr", &L1_st_dr);
-  t->Branch("L1_sh_dr", &L1_sh_dr);
-  t->Branch("L1_pt", &L1_pt);
-  t->Branch("L1_eta", &L1_eta);
-  t->Branch("L1_q", &L1_q);
-  t->Branch("L1_phi_", &L1_phi_);
-
-  t->Branch("Seg_dphi_sh", &Seg_dphi_sh);
-  t->Branch("Seg_deta_sh", &Seg_deta_sh);
-
-  t->Branch("Seg_dr_sh", &Seg_dr_sh);
-  t->Branch("Seg_dr_st", &Seg_dr_st);
-  t->Branch("Seg_dr_l2", &Seg_dr_l2);
-  t->Branch("has_seg_sh_matched", &has_seg_sh_matched);
-  t->Branch("has_seg_st_matched", &has_seg_st_matched);
-  t->Branch("has_seg_l2_matched", &has_seg_l2_matched);
-  t->Branch("has_DTSegments", &has_DTSegments);
-
-  t->Branch("Seg_second_wheel", &Seg_second_wheel);
-  t->Branch("Seg_second_station", &Seg_second_station);
-  t->Branch("Seg_second_st", &Seg_second_st);
-  t->Branch("Seg_second_gp_eta", &Seg_second_gp_eta);
-  t->Branch("Seg_second_gp_phi", &Seg_second_gp_phi);
-  t->Branch("Seg_second_gp_z", &Seg_second_gp_z);
-  t->Branch("Seg_second_gp_y", &Seg_second_gp_y);
-  t->Branch("Seg_second_gp_x", &Seg_second_gp_x);
-  t->Branch("Seg_second_gv_eta", &Seg_second_gv_eta);
-  t->Branch("Seg_second_gv_phi", &Seg_second_gv_phi);
-  t->Branch("Seg_second_sh_dr", &Seg_second_sh_dr);
-  t->Branch("has_eta_phi_dr", &has_eta_phi_dr);
-  t->Branch("Seg_wheel", &Seg_wheel);
-  t->Branch("Seg_station", & Seg_station);
-  t->Branch("Seg_gp_eta", &Seg_gp_eta);
-  t->Branch("Seg_gp_phi", &Seg_gp_phi);
-  t->Branch("Seg_gp_x", &Seg_gp_x);
-  t->Branch("Seg_gp_y", &Seg_gp_y);
-  t->Branch("Seg_gp_z", &Seg_gp_z);
-  t->Branch("Seg_gv_phi", &Seg_gv_phi);
-  t->Branch("Seg_gv_eta", &Seg_gv_eta);
-  t->Branch("Seg_deltaphi_12_gv", &Seg_deltaphi_12_gv);
-  t->Branch("Seg_deltaphi_gv", &Seg_deltaphi_gv);
-  t->Branch("Seg_deltaphi_13_gv", &Seg_deltaphi_13_gv);
-  t->Branch("Seg_deltaphi_14_gv", &Seg_deltaphi_14_gv);
-  t->Branch("Seg_deltaphi_23_gv", &Seg_deltaphi_23_gv);
-  t->Branch("Seg_deltaphi_24_gv", &Seg_deltaphi_24_gv);
-  t->Branch("Seg_deltaphi_34_gv", &Seg_deltaphi_34_gv);
-  t->Branch("has_second_segment_matched", &has_second_segment_matched);
-  t->Branch("has_second_dtSegment", &has_second_dtSegment);
-  t->Branch("has_seg_14", &has_seg_14);
-  t->Branch("has_seg_13", &has_seg_13);
-  t->Branch("has_seg_12", &has_seg_12);
-  t->Branch("has_seg_23", &has_seg_23);
-  t->Branch("has_seg_24", &has_seg_24);
-  t->Branch("has_seg_34", &has_seg_34);
-
-  t->Branch("has_l2", &has_l2);
-  t->Branch("L2_pp", &L2_pp);
-  t->Branch("L2_st_dr", &L2_st_dr);
-  t->Branch("L2_sh_dr", &L2_sh_dr);
-  t->Branch("L2_pt", &L2_pt);
-  t->Branch("L2_eta", &L2_eta);
-  t->Branch("L2_q", &L2_q);
-  t->Branch("L2_phi", &L2_phi);
-
-  t->Branch("L2t_eta", &L2t_eta);
-  t->Branch("L2t_phi", &L2t_phi);
-  t->Branch("L2t_pp", &L2t_pp);
-  t->Branch("L2t_pt", &L2t_pt);
-  t->Branch("L2t_q", &L2t_q);
-  t->Branch("has_l2t", &has_l2t);
-  t->Branch("L2t_st_dr", &L2t_st_dr);
-  t->Branch("L2t_sh_dr", &L2t_sh_dr);
-  t->Branch("has_l2t_sh_matched", &has_l2t_sh_matched);
-  t->Branch("has_l2t_st_matched", &has_l2t_st_matched);
-  t->Branch("L2t_wheel", &L2t_wheel);
-  t->Branch("L2t_station", &L2t_station);
-
 
   t->Branch("lumi", &lumi);
   t->Branch("run", &run);
@@ -1533,11 +1990,6 @@ TTree*MyTrackEffDT::book(TTree *t,const std::string & name)
   t->Branch("Y_gv", &Y_gv);
   t->Branch("dt_dxy", &dt_dxy);
 
-  t->Branch("has_l1_st_matched", &has_l1_st_matched);
-  t->Branch("has_l2_st_matched", &has_l2_st_matched);
-
-  t->Branch("has_l1_sh_matched", &has_l1_sh_matched);
-  t->Branch("has_l2_sh_matched", &has_l2_sh_matched);
 
 
   return t;
